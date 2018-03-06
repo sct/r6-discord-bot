@@ -6,7 +6,13 @@ const APP_ID = '39baebad-39e5-4552-8c25-2c9b919064e2';
 const CACHE_TIME = 120;
 
 const UBI_AUTH_API = 'https://connect.ubi.com/ubiservices/v2';
-const UBI_GAME_API = 'https://public-ubiservices.ubi.com/v2';
+const UBI_GAME_API = 'https://public-ubiservices.ubi.com';
+
+const PLATFORM_URL_NAMES = {
+  uplay: 'OSBOR_PC_LNCH_A',
+  psn: 'OSBOR_PS4_LNCH_A',
+  xbl: 'OSBOR_XBOXONE_LNCH_A',
+};
 
 export default class R6Api {
   constructor(email, password) {
@@ -42,6 +48,10 @@ export default class R6Api {
 
     return Buffer.from(`${this.email}:${this.password}`).toString('base64');
   }
+
+  getSpaceId = (platform) => this.spaceIds[platform];
+
+  getPlatformUrl = (platform) => PLATFORM_URL_NAMES[platform];
 
   async connect() {
     const login = await this.authHandler.post(
@@ -94,16 +104,21 @@ export default class R6Api {
     return data;
   }
 
-  getPlayer = (player, platform) => {
+  async getPlayer(player, platform) {
     if (!player || !platform) {
       throw new Error('You must provide a player name and Platform');
     }
 
-    const playerData = this.getWithAuth('/profiles', {
+    const playerData = await this.getWithAuth('/v2/profiles', {
       nameOnPlatform: player,
       platformType: platform,
     });
 
-    return new Player(this, playerData);
+    return new Promise((resolve, reject) => {
+      if (playerData) {
+        return resolve(new Player(this, playerData));
+      }
+      return reject(new Error('Failed'));
+    });
   }
 }

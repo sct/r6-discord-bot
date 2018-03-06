@@ -7,6 +7,5 @@ dotenv.config();
 
 const api = new R6Api(process.env.UPLAY_USERNAME, process.env.UPLAY_PASSWORD);
 
-const player = api.getPlayer('sctx', UPLAY);
-
-console.log(player);
+api.getPlayer('sctx', UPLAY)
+  .then(player => player.fetchStatistics('operatorpvp_kills'));
