@@ -2,7 +2,7 @@ export default class Player {
   constructor(apiHandler, initialData) {
     this.apiHandler = apiHandler;
 
-    this.profileId = initialData.profileId;
+    this.id = initialData.profileId;
     this.userId = initialData.userId;
     this.platform = initialData.platformType;
     this.platformUrl = apiHandler.getPlatformUrl(this.platform);
@@ -11,18 +11,17 @@ export default class Player {
   }
 
   async fetchStatistics(statistics) {
-    const url = `/v1/spaces/${this.apiHandler.getSpaceId(this.platform)}/sandboxes/
-    ${this.platform}/playerstats2/statistics`;
+    console.log('got here');
+    const url = `/v1/spaces/${this.apiHandler.getSpaceId(this.platform)}/sandboxes/${this.apiHandler.getPlatformUrl(this.platform)}/playerstats2/statistics`;
 
     const data = await this.apiHandler.getWithAuth(url, {
       populations: this.id,
-      statistics: statistics.join(','),
+      statistics: Array.isArray(statistics) ? statistics.join(',') : statistics,
     });
-
-    console.log(data);
 
     return new Promise((resolve, reject) => {
       if (data) {
+        console.log(data);
         return resolve(data);
       }
 

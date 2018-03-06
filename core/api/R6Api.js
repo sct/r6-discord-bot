@@ -27,7 +27,7 @@ export default class R6Api {
     this.sessionId = '';
     this.key = '';
     this.uncertainSpaceId = '';
-    this.spaceids = {
+    this.spaceIds = {
       uplay: '5172a557-50b5-4665-b7db-e3f2e8c5041d',
       psn: '05bfb3f7-6c21-4c42-be1f-97a33fb5cf66',
       xbl: '98a601e5-ca91-4440-b1c5-753f601a2c90',
@@ -72,7 +72,8 @@ export default class R6Api {
           throw new Error('Failed receive ticket. Please check credentials.');
         }
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log(error);
         throw new Error('Failed to authorize. Check credentials')
       });
 
@@ -98,6 +99,7 @@ export default class R6Api {
         throw new Error('Failed to receive data from request.');
       })
       .catch((response) => {
+        console.log(response);
         throw new Error('Failed to get data');
       });
 
@@ -115,8 +117,8 @@ export default class R6Api {
     });
 
     return new Promise((resolve, reject) => {
-      if (playerData) {
-        return resolve(new Player(this, playerData));
+      if (playerData.profiles) {
+        return resolve(new Player(this, playerData.profiles[0]));
       }
       return reject(new Error('Failed'));
     });
