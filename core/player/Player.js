@@ -14,6 +14,8 @@ export default class Player {
 
     this.idOnPlatform = initialData.idOnPlatform;
     this.name = initialData.nameOnPlatform;
+
+    this.lastUpdated = Date.now();
   }
 
   async prepare() {
@@ -40,10 +42,12 @@ export default class Player {
           finalData[strippedKey] = rData[key];
         });
 
+        this.lastUpdated = new Date();
+
         return resolve(finalData);
       }
 
-      return reject(new Error('dumb'));
+      return reject(new Error('Statistics failed to fetch.'));
     });
   }
 
@@ -64,6 +68,8 @@ export default class Player {
         this.assists = data.generalpvp_killassists;
         this.matchWins = data.generalpvp_matchwon;
         this.matchLosses = data.generalpvp_matchlost;
+        this.kd = (this.kills / Math.max(this.deaths, 1)).toFixed(2);
+        this.kda = ((this.kills + this.assists) / Math.max(this.deaths, 1)).toFixed(2);
       })
       .catch(() => logger.log('error', `Failed to load statistics for player ${this.name}`));
   }

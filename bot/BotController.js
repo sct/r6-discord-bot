@@ -1,7 +1,8 @@
-import Discord, { RichEmbed} from 'discord.js';
+import Discord from 'discord.js';
 
 import logger from '../core/logger';
-import { UPLAY } from '../core/constants/platforms';
+import { commandPlayerStats } from './commands/playerCommands';
+import { commandShowLeaderboard } from './commands/leaderboardCommands';
 
 class BotController {
   constructor(api) {
@@ -36,32 +37,12 @@ class BotController {
 
     switch (command[0]) {
       case 'stats':
-        this.commandPlayerStats(message, command[1]);
-        break;
+        return commandPlayerStats(message, command[1]);
+      case 'leaderboard':
+        return commandShowLeaderboard(message, command[1]);
       default:
         return null;
     }
-  }
-
-  async commandPlayerStats(message, playerName) {
-    const player = await this.api.getPlayer(playerName, UPLAY);
-    await player.prepare();
-
-    const embed = new RichEmbed()
-      .setAuthor(`Player: ${player.name}`)
-      .setDescription('Latest stats')
-      .addField('Matches Won', player.matchWins, true)
-      .addField('Matches Lost', player.matchLosses, true)
-      .addField('Kills', player.kills, true)
-      .addField('Deaths', player.deaths, true)
-      .addField('Assists', player.assists, true)
-      .setFooter('Powered by a dumb r6 stats bot')
-      .setThumbnail(player.icon)
-      .setURL(player.url)
-      .setColor([15, 77, 125])
-      .setTimestamp(new Date());
-
-    message.channel.send(embed);
   }
 }
 

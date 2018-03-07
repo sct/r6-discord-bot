@@ -1,8 +1,12 @@
 import fs from 'fs';
+import dotenv from 'dotenv';
 
 import logger from '../logger';
 import ApiHandler from './ApiHandler';
 import Player from '../player/Player';
+
+
+dotenv.config();
 
 const AUTH_CACHE_FILE = 'authcache.json';
 
@@ -17,8 +21,7 @@ const PLATFORM_URL_NAMES = {
   psn: 'OSBOR_PS4_LNCH_A',
   xbl: 'OSBOR_XBOXONE_LNCH_A',
 };
-
-export default class R6Api {
+class R6Api {
   constructor(email, password) {
     this.authHandler = new ApiHandler(UBI_AUTH_API);
     this.gameHandler = new ApiHandler(UBI_GAME_API);
@@ -82,7 +85,7 @@ export default class R6Api {
       })
       .catch((error) => {
         console.log(error);
-        throw new Error('Failed to authorize. Check credentials')
+        throw new Error('Failed to authorize. Check credentials');
       });
 
     return login;
@@ -107,11 +110,34 @@ export default class R6Api {
         throw new Error('Failed to receive data from request.');
       })
       .catch((response) => {
-        console.log(response);
         throw new Error('Failed to get data');
       });
 
     return data;
+  }
+
+  async getPlayers(players, platform) {
+    if (!players || !platform || !Array.isArray(players)) {
+      throw new Error('You must provide an array of player names.');
+    }
+
+    const playerData = await this.getWithAuth('/v2/profiles', {
+      nameOnPlatform: players.join(','),
+      platformType: platform,
+    });
+
+    return new Promise((resolve, reject) => {
+      if (playerData.profiles) {
+        const returnedPlayers = [];
+
+        playerData.profiles.forEach(p => {
+          returnedPlayers.push(new Player(this, p));
+        });
+
+        return resolve(returnedPlayers);
+      }
+      return reject(new Error('Failed to retrieve player'));
+    });
   }
 
   async getPlayer(player, platform) {
@@ -128,7 +154,7 @@ export default class R6Api {
       if (playerData.profiles) {
         return resolve(new Player(this, playerData.profiles[0]));
       }
-      return reject(new Error('Failed'));
+      return reject(new Error('Failed to retrieve player'));
     });
   }
 
@@ -165,3 +191,7 @@ export default class R6Api {
     });
   }
 }
+
+const api = new R6Api(process.env.UPLAY_USERNAME, process.env.UPLAY_PASSWORD);
+
+export default api;
