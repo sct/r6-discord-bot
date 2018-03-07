@@ -42,4 +42,32 @@ async function commandShowLeaderboard(message, type) {
   }
 };
 
+export const commandTrackPlayer =
+async function commandTrackPlayer(message, playerName) {
+  try {
+    if (Leaderboards.addTrackedPlayer(playerName)) {
+      return message.channel.send(`Now tracking ${playerName}`);
+    }
+
+    return message.channel.send(`I am already tracking ${playerName}`);
+  } catch (error) {
+    logger.log('error', 'error');
+    return message.channel.send('Something went wrong. Sorry!');
+  }
+};
+
+export const commandUntrackPlayer =
+async function commandUntrackPlayer(message, playerName) {
+  try {
+    if (Leaderboards.removeTrackedPlayer(playerName)) {
+      return message.channel.send(`No longer tracking ${playerName}`);
+    }
+
+    return message.channel.send(`I am not tracking ${playerName}`);
+  } catch (error) {
+    logger.log('error', 'error');
+    return message.channel.send('Something went wrong. Sorry!');
+  }
+};
+
 export default commandShowLeaderboard;

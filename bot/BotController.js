@@ -2,7 +2,10 @@ import Discord from 'discord.js';
 
 import logger from '../core/logger';
 import { commandPlayerStats } from './commands/playerCommands';
-import { commandShowLeaderboard } from './commands/leaderboardCommands';
+import {
+  commandShowLeaderboard, commandTrackPlayer,
+  commandUntrackPlayer,
+} from './commands/leaderboardCommands';
 
 class BotController {
   constructor(api) {
@@ -40,6 +43,10 @@ class BotController {
         return commandPlayerStats(message, command[1]);
       case 'leaderboard':
         return commandShowLeaderboard(message, command[1]);
+      case 'track':
+        return commandTrackPlayer(message, command[1]);
+      case 'untrack':
+        return commandUntrackPlayer(message, command[1]);
       default:
         return null;
     }

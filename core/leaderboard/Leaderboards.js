@@ -3,7 +3,7 @@ import SimpleLeaderboard from './SimpleLeaderboard';
 
 class Leaderboards {
   constructor() {
-    this.trackedPlayers = ['sctx', 'keep_one', 'solusian', 'ausgap'];
+    this.trackedPlayers = [];
     this.leaderboards = {
       kills: new SimpleLeaderboard(this.trackedPlayers, {
         name: 'All-Time Kills',
@@ -17,6 +17,12 @@ class Leaderboards {
         keyName: 'Deaths',
         description: 'Showing top deaths from top to bottom',
       }),
+      kd: new SimpleLeaderboard(this.trackedPlayers, {
+        name: 'All-Time K/D Ratio',
+        key: 'kd',
+        keyName: 'K/D Ratio',
+        description: 'Showing top K/D ratios from all tracked players',
+      }),
     };
   }
 
@@ -26,6 +32,28 @@ class Leaderboards {
     }
 
     return this.leaderboards[id];
+  }
+
+  addTrackedPlayer = (playerName) => {
+    if (!this.trackedPlayers.includes(playerName.toLowerCase())) {
+      this.trackedPlayers.push(playerName.toLowerCase());
+
+      return true;
+    }
+
+    return false;
+  }
+
+  removeTrackedPlayer = (playerName) => {
+    if (this.trackedPlayers.includes(playerName.toLowerCase())) {
+      const index = this.trackedPlayers.findIndex(p => p === playerName.toLowerCase());
+
+      this.trackedPlayers.splice(index, 1);
+
+      return true;
+    }
+
+    return false;
   }
 }
 
