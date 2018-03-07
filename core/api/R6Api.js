@@ -1,6 +1,10 @@
+import fs from 'fs';
+
 import logger from '../logger';
 import ApiHandler from './ApiHandler';
 import Player from '../player/Player';
+
+const AUTH_CACHE_FILE = 'authcache.json';
 
 const APP_ID = '39baebad-39e5-4552-8c25-2c9b919064e2';
 const CACHE_TIME = 120;
@@ -39,6 +43,8 @@ export default class R6Api {
 
     this.cachetime = CACHE_TIME;
     this.cache = {};
+
+    this.loadAuthCache();
   }
 
   generateBasicToken = () => {
@@ -68,6 +74,8 @@ export default class R6Api {
           this.key = response.data.ticket;
           this.sessionId = response.data.sessionId;
           this.uncertainSpaceId = response.data.spaceId;
+
+          this.saveAuthCache();
         } else {
           throw new Error('Failed receive ticket. Please check credentials.');
         }
@@ -121,6 +129,39 @@ export default class R6Api {
         return resolve(new Player(this, playerData.profiles[0]));
       }
       return reject(new Error('Failed'));
+    });
+  }
+
+  saveAuthCache = () => {
+    const authData = {
+      time: Date.now(),
+      key: this.key,
+      sessionId: this.sessionId,
+      uncertainSpaceId: this.uncertainSpaceId,
+    };
+
+    fs.writeFile(AUTH_CACHE_FILE, JSON.stringify(authData), 'utf8', () => {
+      logger.log('debug', 'Cached auth data');
+    });
+  }
+
+  async loadAuthCache() {
+    await fs.readFile(AUTH_CACHE_FILE, 'utf8', (err, data) => {
+      if (err) {
+        return fs.writeFile(AUTH_CACHE_FILE, '', () => logger.log('info', 'Created Auth Cache'));
+      }
+
+      if (data) {
+        const authData = JSON.parse(data);
+
+        if (authData.time) {
+          this.key = data.key;
+          this.sessionId = data.sessionId;
+          this.uncertainSpaceId = data.uncertainSpaceId;
+          logger.log('debug', 'Loaded auth cache');
+        }
+      }
+
     });
   }
 }
