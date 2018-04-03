@@ -12,6 +12,8 @@ const AUTH_CACHE_FILE = 'authcache.json';
 
 const APP_ID = '39baebad-39e5-4552-8c25-2c9b919064e2';
 const CACHE_TIME = 120;
+const MAX_ATTEMPTS = 3;
+const TOKEN_EXPIRE = 1000 * 60 * 60 * 5;
 
 const UBI_AUTH_API = 'https://connect.ubi.com/ubiservices/v2';
 const UBI_GAME_API = 'https://public-ubiservices.ubi.com';
@@ -47,6 +49,10 @@ class R6Api {
     this.cachetime = CACHE_TIME;
     this.cache = {};
 
+    this.lastUpdatedToken = Date.now();
+
+    this.attempts = 0;
+
     this.loadAuthCache();
   }
 
@@ -79,24 +85,26 @@ class R6Api {
           this.uncertainSpaceId = response.data.spaceId;
 
           this.saveAuthCache();
+          this.lastUpdatedToken = Date.now() + TOKEN_EXPIRE;
+          this.attempts = 0;
         } else {
           throw new Error('Failed receive ticket. Please check credentials.');
         }
       })
-      .catch((error) => {
-        console.log(error);
+      .catch(() => {
+        this.attempts += 1;
         throw new Error('Failed to authorize. Check credentials');
       });
 
     return login;
   }
 
-  async getWithAuth(endpoint, params) {
-    if (!this.key) {
+  async getWithAuth(endpoint, params, forceConnect = false) {
+    if (!this.key || Date.now() >= this.lastUpdatedToken || forceConnect) {
       await this.connect();
     }
 
-    const data = await this.gameHandler.get(endpoint, params, {
+    let data = await this.gameHandler.get(endpoint, params, {
       Authorization: `Ubi_v1 t=${this.key}`,
       'Ubi-AppId': this.appId,
       'Ubi-Sessionid': this.sessionId,
@@ -109,9 +117,13 @@ class R6Api {
 
         throw new Error('Failed to receive data from request.');
       })
-      .catch((response) => {
+      .catch(() => {
         throw new Error('Failed to get data');
       });
+
+    if (!data && this.attempts < MAX_ATTEMPTS) {
+      data = this.getWithAuth(endpoint, params, true);
+    }
 
     return data;
   }
@@ -164,6 +176,7 @@ class R6Api {
       key: this.key,
       sessionId: this.sessionId,
       uncertainSpaceId: this.uncertainSpaceId,
+      lastUpdatedToken: this.lastUpdatedToken,
     };
 
     fs.writeFile(AUTH_CACHE_FILE, JSON.stringify(authData), 'utf8', () => {
@@ -181,13 +194,17 @@ class R6Api {
         const authData = JSON.parse(data);
 
         if (authData.time) {
-          this.key = data.key;
-          this.sessionId = data.sessionId;
-          this.uncertainSpaceId = data.uncertainSpaceId;
+          this.key = authData.key;
+          this.sessionId = authData.sessionId;
+          this.uncertainSpaceId = authData.uncertainSpaceId;
+          this.lastUpdatedToken = authData.lastUpdatedToken || 0;
           logger.log('debug', 'Loaded auth cache');
         }
+
+        return true;
       }
 
+      return false;
     });
   }
 }

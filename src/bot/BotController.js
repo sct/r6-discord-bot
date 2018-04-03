@@ -7,6 +7,8 @@ import {
   commandUntrackPlayer,
 } from './commands/leaderboardCommands';
 
+const BOT_SYMBOL = '?';
+
 class BotController {
   constructor(api) {
     this.client = new Discord.Client();
@@ -34,7 +36,7 @@ class BotController {
   }
 
   handleCommand = (message) => {
-    const command = message.content.replace('?r6 ', '').split(' ');
+    const command = message.content.replace(`${BOT_SYMBOL}r6 `, '').split(' ');
 
     logger.log('info', command);
 

@@ -42,7 +42,7 @@ export default class Player {
           finalData[strippedKey] = rData[key];
         });
 
-        this.lastUpdated = new Date();
+        this.lastUpdated = Date.now();
 
         return resolve(finalData);
       }

@@ -2,6 +2,9 @@ import api from '../api';
 import { UPLAY } from '../constants/platforms';
 import logger from '../logger';
 
+// Time to expire player objects
+const PLAYER_EXPIRE = 1000 * 60 * 2;
+
 class Players {
   constructor() {
     this.players = [];
@@ -12,12 +15,12 @@ class Players {
   async getPlayer(playerName) {
     let player = this.players.find(p => p.name.toLowerCase() === playerName.toLowerCase());
 
-    if (!player) {
-      logger.log('debug', 'Player not found. Grabbing from API', { playerName });
+    if (!player || Date.now() >= player.lastUpdated + PLAYER_EXPIRE) {
+      logger.log('debug', 'Player not found or expired. Grabbing from API', { playerName });
       player = await api.getPlayer(playerName, UPLAY);
-    }
 
-    this.updatePlayers(player);
+      this.updatePlayers(player);
+    }
 
     return player;
   }
