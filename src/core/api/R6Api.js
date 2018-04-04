@@ -13,7 +13,7 @@ const AUTH_CACHE_FILE = 'authcache.json';
 const APP_ID = '39baebad-39e5-4552-8c25-2c9b919064e2';
 const CACHE_TIME = 120;
 const MAX_ATTEMPTS = 3;
-const TOKEN_EXPIRE = 1000 * 60 * 60 * 5;
+const TOKEN_EXPIRE = 1000 * 60 * 60;
 
 const UBI_AUTH_API = 'https://connect.ubi.com/ubiservices/v2';
 const UBI_GAME_API = 'https://public-ubiservices.ubi.com';

@@ -3,7 +3,7 @@ import { UPLAY } from '../constants/platforms';
 import logger from '../logger';
 
 // Time to expire player objects
-const PLAYER_EXPIRE = 1000 * 60 * 2;
+const PLAYER_EXPIRE = 1000 * 60 * 10;
 
 class Players {
   constructor() {
