@@ -70,6 +70,7 @@ export default class Player {
         this.matchLosses = data.generalpvp_matchlost;
         this.kd = (this.kills / Math.max(this.deaths, 1)).toFixed(2);
         this.kda = ((this.kills + this.assists) / Math.max(this.deaths, 1)).toFixed(2);
+        this.wl = (this.matchWins / Math.max(this.matchLosses, 1)).toFixed(2);
       })
       .catch(() => logger.log('error', `Failed to load statistics for player ${this.name}`));
   }
