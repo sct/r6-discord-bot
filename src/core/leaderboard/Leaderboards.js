@@ -24,6 +24,18 @@ class Leaderboards {
         keyName: 'K/D Ratio',
         description: 'Showing top K/D ratios from all tracked players',
       }),
+      kda: new SimpleLeaderboard(this, {
+        name: 'All-Time KDA Ratio',
+        key: 'kda',
+        keyName: 'KDA Ratio',
+        description: 'Showing top KDA ratios from all tracked players',
+      }),
+      wl: new SimpleLeaderboard(this, {
+        name: 'All-Time W/L Ratio',
+        key: 'wl',
+        keyName: 'W/L Ratio',
+        description: 'Showing top W/L ratios from all tracked players',
+      }),
     };
   }
 
