@@ -17,12 +17,14 @@ export default class Player {
 
     this.idOnPlatform = initialData.idOnPlatform;
     this.name = initialData.nameOnPlatform;
+    this.prepared = false;
 
     this.lastUpdated = Date.now();
   }
 
   async prepare() {
     await this.loadGeneralStats();
+    this.prepared = true;
   }
 
   async fetchStatistics(statistics) {

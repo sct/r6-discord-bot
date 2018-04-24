@@ -60,11 +60,11 @@ class Leaderboards {
 
     await this.db.findOne({ _id: serverId }, (err, lb) => {
       if (!lb) {
-        this.db.insert({ _id: serverId, trackedPlayers: [playerName] }, () => true);
+        this.db.insert({ _id: serverId, trackedPlayers: [playerName.toLowerCase()] }, () => true);
       } else {
         this.db.update(
           { _id: serverId },
-          { $addToSet: { trackedPlayers: playerName } },
+          { $addToSet: { trackedPlayers: playerName.toLowerCase() } },
           () => true,
         );
       }
@@ -75,10 +75,10 @@ class Leaderboards {
 
   async removeTrackedPlayer(serverId, playerName) {
     await this.db.findOne({ _id: serverId }, (err, lb) => {
-      if (lb && lb.trackedPlayers.includes(playerName)) {
+      if (lb && lb.trackedPlayers.includes(playerName.toLowerCase())) {
         this.db.update(
           { _id: serverId },
-          { $pull: { trackedPlayers: playerName } },
+          { $pull: { trackedPlayers: playerName.toLowerCase() } },
           () => true,
         );
       }

@@ -12,7 +12,7 @@ class Players {
   async getPlayer(playerName) {
     let player = this.players.find(p => p.name.toLowerCase() === playerName.toLowerCase());
 
-    if (!player || player.isExpired()) {
+    if (!player || player.isExpired() || !player.prepared) {
       logger.log('debug', 'Player not found or expired. Grabbing from API', { playerName });
       player = await api.getPlayer(playerName, UPLAY);
 
@@ -55,10 +55,11 @@ class Players {
 
   checkPlayer = (playerName) => {
     const player = this.players.find(p => p.name.toLowerCase() === playerName.toLowerCase());
-    if (player && !player.isExpired()) {
+    if (player && player.prepared && !player.isExpired()) {
       return player;
     }
 
+    logger.debug(`checkPlayer failed for ${playerName}`);
     return null;
   }
 
