@@ -2,12 +2,14 @@ import dotenv from 'dotenv';
 
 import BotController from './bot/BotController';
 import api from './core/api';
+import db from './core/db';
 
 dotenv.config();
 
-// api.getPlayer('sctx', UPLAY)
-//   .then(player => player.fetchStatistics('operatorpvp_kills'));
+// Configure Database
+db.leaderboards.loadDatabase();
 
+// Initialize Bot
 const bot = new BotController(api);
 
 bot.connect();

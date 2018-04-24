@@ -62,3 +62,6 @@ typings/
 
 # Auth cache file
 authcache.json
+
+# Database files
+db/
