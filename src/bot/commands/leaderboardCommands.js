@@ -12,9 +12,9 @@ async function commandShowLeaderboard(message, type) {
 
     const leaderboard = Leaderboards.getLeaderboard(type);
 
-    logger.log('debug', leaderboard);
+    logger.debug(`Leaderboard Request: ${leaderboard.name}`);
 
-    const players = await leaderboard.getLeaderboardPlayers();
+    const players = await leaderboard.getLeaderboardPlayers(message.guild.id);
 
     if (players && players.length > 0) {
       const embed = new RichEmbed()
@@ -37,7 +37,7 @@ async function commandShowLeaderboard(message, type) {
 
     return message.channel.send('Unable to load leaderboard');
   } catch (error) {
-    logger.log('error', error);
+    logger.error(error.message);
     return message.channel.send('Failed to load leaderboard');
   }
 };
@@ -45,21 +45,21 @@ async function commandShowLeaderboard(message, type) {
 export const commandTrackPlayer =
 async function commandTrackPlayer(message, playerName) {
   try {
-    if (Leaderboards.addTrackedPlayer(playerName)) {
+    if (await Leaderboards.addTrackedPlayer(message.guild.id, playerName)) {
       return message.channel.send(`Now tracking ${playerName}`);
     }
 
     return message.channel.send(`I am already tracking ${playerName}`);
   } catch (error) {
     logger.log('error', 'error');
-    return message.channel.send('Something went wrong. Sorry!');
+    return message.channel.send('Player does not exist. Did you spell it wrong?');
   }
 };
 
 export const commandUntrackPlayer =
 async function commandUntrackPlayer(message, playerName) {
   try {
-    if (Leaderboards.removeTrackedPlayer(playerName)) {
+    if (await Leaderboards.removeTrackedPlayer(message.guild.id, playerName)) {
       return message.channel.send(`No longer tracking ${playerName}`);
     }
 

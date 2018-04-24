@@ -1,23 +1,24 @@
-import logger from '../logger';
 import SimpleLeaderboard from './SimpleLeaderboard';
+import db from '../db';
+import { Players } from '../player';
 
 class Leaderboards {
   constructor() {
-    this.trackedPlayers = [];
+    this.db = db.leaderboards;
     this.leaderboards = {
-      kills: new SimpleLeaderboard(this.trackedPlayers, {
+      kills: new SimpleLeaderboard(this, {
         name: 'All-Time Kills',
         key: 'kills',
         keyName: 'Kills',
         description: 'Showing top murderers from top to bottom',
       }),
-      deaths: new SimpleLeaderboard(this.trackedPlayers, {
+      deaths: new SimpleLeaderboard(this, {
         name: 'All-Time Deaths',
         key: 'deaths',
         keyName: 'Deaths',
         description: 'Showing top deaths from top to bottom',
       }),
-      kd: new SimpleLeaderboard(this.trackedPlayers, {
+      kd: new SimpleLeaderboard(this, {
         name: 'All-Time K/D Ratio',
         key: 'kd',
         keyName: 'K/D Ratio',
@@ -34,26 +35,54 @@ class Leaderboards {
     return this.leaderboards[id];
   }
 
-  addTrackedPlayer = (playerName) => {
-    if (!this.trackedPlayers.includes(playerName.toLowerCase())) {
-      this.trackedPlayers.push(playerName.toLowerCase());
+  async getTrackedPlayers(serverId) {
+    return new Promise((resolve, reject) => {
+      try {
+        this.db.findOne({ _id: serverId }, (err, lb) => {
+          if (!lb) {
+            return resolve([]);
+          }
 
-      return true;
-    }
-
-    return false;
+          return resolve(lb.trackedPlayers);
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
-  removeTrackedPlayer = (playerName) => {
-    if (this.trackedPlayers.includes(playerName.toLowerCase())) {
-      const index = this.trackedPlayers.findIndex(p => p === playerName.toLowerCase());
+  async addTrackedPlayer(serverId, playerName) {
+    const player = await Players.getPlayer(playerName);
 
-      this.trackedPlayers.splice(index, 1);
-
-      return true;
+    if (!player) {
+      return false;
     }
 
-    return false;
+    await this.db.findOne({ _id: serverId }, (err, lb) => {
+      if (!lb) {
+        this.db.insert({ _id: serverId, trackedPlayers: [playerName.toLowerCase()] }, () => true);
+      } else {
+        this.db.update(
+          { _id: serverId },
+          { $addToSet: { trackedPlayers: playerName.toLowerCase() } },
+          () => true,
+        );
+      }
+    });
+
+    return true;
+  }
+
+  async removeTrackedPlayer(serverId, playerName) {
+    await this.db.findOne({ _id: serverId }, (err, lb) => {
+      if (lb && lb.trackedPlayers.includes(playerName.toLowerCase())) {
+        this.db.update(
+          { _id: serverId },
+          { $pull: { trackedPlayers: playerName.toLowerCase() } },
+          () => true,
+        );
+      }
+    });
   }
 }
 

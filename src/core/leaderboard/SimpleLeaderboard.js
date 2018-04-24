@@ -4,8 +4,8 @@ const SORT_ASC = 0;
 const SORT_DESC = 1;
 
 class SimpleLeaderboard {
-  constructor(trackedPlayers, options) {
-    this.trackedPlayers = trackedPlayers;
+  constructor(leaderboards, options) {
+    this.leaderboards = leaderboards;
     this.name = options.name;
     this.key = options.key;
     this.keyName = options.keyName;
@@ -13,8 +13,9 @@ class SimpleLeaderboard {
     this.updateRate = options.rate;
   }
 
-  async getLeaderboardPlayers(sortOrder = SORT_DESC) {
-    const trackedPlayers = await Players.getPlayers(this.trackedPlayers);
+  async getLeaderboardPlayers(serverId, sortOrder = SORT_DESC) {
+    const players = await this.leaderboards.getTrackedPlayers(serverId);
+    const trackedPlayers = await Players.getPlayers(players);
 
     trackedPlayers.sort((a, b) => {
       if (sortOrder === SORT_ASC) {

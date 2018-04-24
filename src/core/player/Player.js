@@ -1,5 +1,8 @@
 import logger from '../logger';
 
+// Time to expire player objects
+const PLAYER_EXPIRE = 1000 * 60 * 10;
+
 export default class Player {
   constructor(apiHandler, initialData) {
     this.apiHandler = apiHandler;
@@ -14,12 +17,14 @@ export default class Player {
 
     this.idOnPlatform = initialData.idOnPlatform;
     this.name = initialData.nameOnPlatform;
+    this.prepared = false;
 
     this.lastUpdated = Date.now();
   }
 
   async prepare() {
     await this.loadGeneralStats();
+    this.prepared = true;
   }
 
   async fetchStatistics(statistics) {
@@ -73,5 +78,13 @@ export default class Player {
         this.wl = (this.matchWins / Math.max(this.matchLosses, 1)).toFixed(2);
       })
       .catch(() => logger.log('error', `Failed to load statistics for player ${this.name}`));
+  }
+
+  isExpired = () => {
+    if (Date.now() >= this.lastUpdated + PLAYER_EXPIRE) {
+      return true;
+    }
+
+    return false;
   }
 }
