@@ -76,6 +76,14 @@ export default class Player {
         this.kd = (this.kills / Math.max(this.deaths, 1)).toFixed(2);
         this.kda = ((this.kills + this.assists) / Math.max(this.deaths, 1)).toFixed(2);
         this.wl = (this.matchWins / Math.max(this.matchLosses, 1)).toFixed(2);
+        this.bullethit = data.generalpvp_bullethit;
+        this.bulletfired = data.generalpvp_bulletfired;
+        this.accuracy = Math.round((this.bullethit / this.bulletfired) * 100);
+        this.suicides = data.generalpvp_suicide;
+        this.meleekills = data.generalpvp_meleekills;
+        this.revives = data.generalpvp_revive;
+        this.headshots = data.generalpvp_headshot;
+        this.headshotAccuracy = Math.round((this.headshots / this.kills) * 100);
       })
       .catch(() => logger.log('error', `Failed to load statistics for player ${this.name}`));
   }

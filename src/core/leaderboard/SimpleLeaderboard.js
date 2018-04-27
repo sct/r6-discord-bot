@@ -19,10 +19,10 @@ class SimpleLeaderboard {
 
     trackedPlayers.sort((a, b) => {
       if (sortOrder === SORT_ASC) {
-        return a[this.key] - b[this.key];
+        return (a[this.key] || 0) - (b[this.key] || 0);
       }
 
-      return b[this.key] - a[this.key];
+      return (b[this.key] || 0) - (a[this.key] || 0);
     });
 
     return trackedPlayers;

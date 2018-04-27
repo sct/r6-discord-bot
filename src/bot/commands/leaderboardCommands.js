@@ -27,7 +27,7 @@ async function commandShowLeaderboard(message, type) {
       players.forEach((player, index) => {
         embed.addField(
           `#${index + 1} ${player.name}`,
-          `${leaderboard.keyName}: ${player[leaderboard.key]}`,
+          `${leaderboard.keyName}: ${player[leaderboard.key] || 0}`,
           true,
         );
       });
