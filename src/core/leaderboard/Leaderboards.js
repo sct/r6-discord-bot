@@ -36,6 +36,24 @@ class Leaderboards {
         keyName: 'W/L Ratio',
         description: 'Showing top W/L ratios from all tracked players',
       }),
+      melee: new SimpleLeaderboard(this, {
+        name: 'All-Time Melee Kills',
+        key: 'meleekills',
+        keyName: 'Melee Kills',
+        description: 'Showing total melee kills from all tracked players',
+      }),
+      suicides: new SimpleLeaderboard(this, {
+        name: 'All-Time Suicides',
+        key: 'suicides',
+        keyName: 'Suicides',
+        description: 'Showing total suicides from all tracked players',
+      }),
+      accuracy: new SimpleLeaderboard(this, {
+        name: 'All-Time Accuracy',
+        key: 'accuracy',
+        keyName: 'Accuracy',
+        description: 'Showing accuracy from all tracked players',
+      }),
     };
   }
 
