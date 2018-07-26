@@ -1,3 +1,3 @@
-export const XBOX = 'xbl';
-export const UPLAY = 'uplay';
-export const PLAYSTATION = 'psn';
+export const XBOX = "xbl";
+export const UPLAY = "uplay";
+export const PLAYSTATION = "psn";

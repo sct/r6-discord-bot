@@ -1,19 +1,23 @@
-import api from '../api';
-import { UPLAY } from '../constants/platforms';
-import logger from '../logger';
+import api from "../api";
+import { UPLAY } from "../constants/platforms";
+import logger from "../logger";
 
 class Players {
   constructor() {
     this.players = [];
   }
 
-  addPlayer = (player) => this.players.push(player);
+  addPlayer = player => this.players.push(player);
 
   async getPlayer(playerName) {
-    let player = this.players.find(p => p.name.toLowerCase() === playerName.toLowerCase());
+    let player = this.players.find(
+      p => p.name.toLowerCase() === playerName.toLowerCase()
+    );
 
     if (!player || player.isExpired() || !player.prepared) {
-      logger.log('debug', 'Player not found or expired. Grabbing from API', { playerName });
+      logger.log("debug", "Player not found or expired. Grabbing from API", {
+        playerName
+      });
       player = await api.getPlayer(playerName, UPLAY);
 
       this.updatePlayers(player);
@@ -53,34 +57,38 @@ class Players {
     return savedPlayers;
   }
 
-  checkPlayer = (playerName) => {
-    const player = this.players.find(p => p.name.toLowerCase() === playerName.toLowerCase());
+  checkPlayer = playerName => {
+    const player = this.players.find(
+      p => p.name.toLowerCase() === playerName.toLowerCase()
+    );
     if (player && player.prepared && !player.isExpired()) {
       return player;
     }
 
     logger.debug(`checkPlayer failed for ${playerName}`);
     return null;
-  }
+  };
 
-  updatePlayers = (player) => {
+  updatePlayers = player => {
     const index = this.players.findIndex(p => p.id === player.id);
 
     if (index < 0) {
-      logger.log('debug', 'Player not found in array.', { player });
+      logger.log("debug", "Player not found in array.", {
+        player
+      });
       return this.players.push(player);
     }
 
     this.players[index] = player;
 
     return player;
-  }
+  };
 
-  removePlayer = (playerId) => {
+  removePlayer = playerId => {
     const index = this.players.findIndex(p => p.id === playerId);
 
     return this.players.splice(index, 1);
-  }
+  };
 }
 
 const players = new Players();

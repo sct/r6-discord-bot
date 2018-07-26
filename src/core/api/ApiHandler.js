@@ -1,25 +1,24 @@
-import axios from 'axios';
+import axios from "axios";
 
 export default class ApiHandler {
-
   constructor(url) {
     this.url = url;
   }
 
   post = (endpoint, params, headers, data) =>
     axios({
-      method: 'post',
+      method: "post",
       url: `${this.url}${endpoint}`,
       params,
       headers,
-      data,
+      data
     });
 
   get = (endpoint, params, headers) =>
     axios({
-      method: 'get',
+      method: "get",
       url: `${this.url}${endpoint}`,
       params,
-      headers,
+      headers
     });
 }

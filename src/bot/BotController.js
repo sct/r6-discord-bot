@@ -1,13 +1,14 @@
-import Discord from 'discord.js';
+import Discord from "discord.js";
 
-import logger from '../core/logger';
-import { commandPlayerStats } from './commands/playerCommands';
+import logger from "../core/logger";
+import { commandPlayerStats } from "./commands/playerCommands";
 import {
-  commandShowLeaderboard, commandTrackPlayer,
-  commandUntrackPlayer,
-} from './commands/leaderboardCommands';
+  commandShowLeaderboard,
+  commandTrackPlayer,
+  commandUntrackPlayer
+} from "./commands/leaderboardCommands";
 
-const BOT_SYMBOL = '?';
+const BOT_SYMBOL = "?";
 
 class BotController {
   constructor(api) {
@@ -18,41 +19,41 @@ class BotController {
   connect = () => {
     this.client.login(process.env.DISCORD_BOT_TOKEN);
 
-    this.client.on('ready', () => {
-      logger.log('info', 'Connected to Discord');
+    this.client.on("ready", () => {
+      logger.log("info", "Connected to Discord");
     });
-  }
+  };
 
   prepare = () => {
     this.loadListeners();
-  }
+  };
 
   loadListeners = () => {
-    this.client.on('message', message => {
+    this.client.on("message", message => {
       if (message.content.match(/^\?r6\s(.*)/)) {
         this.handleCommand(message);
       }
     });
-  }
+  };
 
-  handleCommand = (message) => {
-    const command = message.content.replace(`${BOT_SYMBOL}r6 `, '').split(' ');
+  handleCommand = message => {
+    const command = message.content.replace(`${BOT_SYMBOL}r6 `, "").split(" ");
 
-    logger.log('info', command);
+    logger.log("info", command);
 
     switch (command[0]) {
-      case 'stats':
+      case "stats":
         return commandPlayerStats(message, command[1]);
-      case 'leaderboard':
+      case "leaderboard":
         return commandShowLeaderboard(message, command[1]);
-      case 'track':
+      case "track":
         return commandTrackPlayer(message, command[1]);
-      case 'untrack':
+      case "untrack":
         return commandUntrackPlayer(message, command[1]);
       default:
         return null;
     }
-  }
+  };
 }
 
 export default BotController;

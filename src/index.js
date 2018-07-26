@@ -1,8 +1,8 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 
-import BotController from './bot/BotController';
-import api from './core/api';
-import db from './core/db';
+import BotController from "./bot/BotController";
+import api from "./core/api";
+import db from "./core/db";
 
 dotenv.config();
 

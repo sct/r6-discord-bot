@@ -1,4 +1,4 @@
-import Players from '../player/Players';
+import Players from "../player/Players";
 
 const SORT_ASC = 0;
 const SORT_DESC = 1;
