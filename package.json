@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "nodemon -w src --exec \"babel-node src/\"",
     "start": "babel-node src/",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "sct",
   "license": "MIT",
@@ -28,7 +30,8 @@
     "discord.js": "^11.3.2",
     "dotenv": "^5.0.1",
     "nedb": "^1.8.0",
-    "winston": "^3.0.0-rc1"
+    "winston": "^3.0.0-rc1",
+    "snyk": "^1.110.2"
   },
   "babel": {
     "presets": [
@@ -55,5 +58,6 @@
     "extends": [
       "airbnb-base"
     ]
-  }
+  },
+  "snyk": true
 }
