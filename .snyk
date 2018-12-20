@@ -12,3 +12,11 @@ patch:
         patched: '2018-11-27T03:19:44.770Z'
     - babel-cli > chokidar > fsevents > node-pre-gyp > hawk > cryptiles > boom > hoek:
         patched: '2018-11-27T03:19:44.770Z'
+    - babel-cli > chokidar > fsevents > node-pre-gyp > hawk > hoek:
+        patched: '2018-12-20T03:06:19.021Z'
+    - babel-cli > chokidar > fsevents > node-pre-gyp > hawk > boom > hoek:
+        patched: '2018-12-20T03:06:19.021Z'
+    - babel-cli > chokidar > fsevents > node-pre-gyp > hawk > sntp > hoek:
+        patched: '2018-12-20T03:06:19.021Z'
+    - babel-cli > chokidar > fsevents > node-pre-gyp > hawk > cryptiles > boom > hoek:
+        patched: '2018-12-20T03:06:19.021Z'
