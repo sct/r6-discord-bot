@@ -30,7 +30,7 @@
     "discord.js": "^11.3.2",
     "dotenv": "^5.0.1",
     "nedb": "^1.8.0",
-    "winston": "^3.0.0-rc1",
+    "winston": "^3.3.0",
     "snyk": "^1.110.2"
   },
   "babel": {
